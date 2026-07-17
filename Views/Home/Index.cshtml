@@ -1,0 +1,232 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - .NET Prototype</title>
+    <link rel="stylesheet" href="~/css/app.css" />
+</head>
+<body>
+    <!-- Start Screen -->
+    <div id="startScreen" class="screen active">
+        <h1 class="app-title">Task Manager</h1>
+        <p class="app-subtitle">
+            Welcome to your personal task management application.
+            Organize your daily goals, track your progress, and stay focused on what matters most.
+            Built with .NET technology for seamless productivity.
+        </p>
+        <div>
+            <button class="btn btn-primary" onclick="showScreen('signupScreen')">Sign Up</button>
+            <button class="btn" onclick="showScreen('loginScreen')">Log In</button>
+        </div>
+    </div>
+
+    <!-- Sign Up Screen -->
+    <div id="signupScreen" class="screen">
+        <div class="form-container">
+            <h2 class="form-title">Create Account</h2>
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input type="text" id="signupUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign Up</button>
+            </form>
+            <div class="form-links">
+                <p>Already have an account? <a onclick="showScreen('loginScreen')">Log In</a></p>
+                <p><a onclick="showScreen('startScreen')">Back to Home</a></p>
+            </div>
+            <div id="signupMessage"></div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen">
+        <div class="form-container">
+            <h2 class="form-title">Log In</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Log In</button>
+            </form>
+            <div class="form-links">
+                <p>Don't have an account? <a onclick="showScreen('signupScreen')">Sign Up</a></p>
+                <p><a onclick="showScreen('startScreen')">Back to Home</a></p>
+            </div>
+            <div id="loginMessage"></div>
+        </div>
+    </div>
+
+    <!-- Name Setup Screen -->
+    <div id="nameSetupScreen" class="screen">
+        <div class="form-container">
+            <h2 class="form-title">Welcome!</h2>
+            <p class="name-setup-text">Please enter your name to get started</p>
+            <form id="nameSetupForm" onsubmit="handleNameSetup(event)">
+                <div class="form-group">
+                    <label for="userName">Your Name</label>
+                    <input type="text" id="userName" required placeholder="Enter your full name">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Continue</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Profile Screen -->
+    <div id="profileScreen" class="screen">
+        <div class="profile-header">
+            <h1 class="user-name" id="displayUserName">User Name</h1>
+            <div class="button-group">
+                <button class="btn" onclick="openAddModal()">Add Task</button>
+                <button class="btn" onclick="openEditModal()">Edit Task</button>
+                <button class="btn" onclick="openRemoveModal()">Remove Task</button>
+            </div>
+        </div>
+
+        <div class="spreadsheet-container">
+            <div class="spreadsheet-nav">
+                <button class="nav-pointer left" onclick="switchSpreadsheet('prev')">&#9664;</button>
+                <h2 class="spreadsheet-title" id="spreadsheetTitle">Today's Tasks</h2>
+                <button class="nav-pointer right" onclick="switchSpreadsheet('next')">&#9654;</button>
+            </div>
+
+            <table class="spreadsheet" id="taskSpreadsheet">
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell">Done</th>
+                        <th>Task</th>
+                        <th>Category</th>
+                        <th>Due Date</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody id="taskTableBody">
+                    <!-- Tasks will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Task</h3>
+                <button class="close-btn" onclick="closeModal('addModal')">&times;</button>
+            </div>
+            <form id="addTaskForm" onsubmit="handleAddTask(event)">
+                <div class="form-group">
+                    <label for="taskName">Task Name</label>
+                    <input type="text" id="taskName" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskCategory">Category</label>
+                    <select id="taskCategory" required>
+                        <option value="Work">Work</option>
+                        <option value="Personal">Personal</option>
+                        <option value="Health">Health</option>
+                        <option value="Learning">Learning</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskDueDate">Due Date</label>
+                    <input type="date" id="taskDueDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskPriority">Priority</label>
+                    <select id="taskPriority" required>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" onclick="closeModal('addModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Task</h3>
+                <button class="close-btn" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <div class="task-list" id="editTaskList">
+                <!-- Tasks will be populated here -->
+            </div>
+            <div id="editForm" style="display: none;">
+                <div class="form-group">
+                    <label for="editTaskName">Task Name</label>
+                    <input type="text" id="editTaskName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTaskCategory">Category</label>
+                    <select id="editTaskCategory" required>
+                        <option value="Work">Work</option>
+                        <option value="Personal">Personal</option>
+                        <option value="Health">Health</option>
+                        <option value="Learning">Learning</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editTaskDueDate">Due Date</label>
+                    <input type="date" id="editTaskDueDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTaskPriority">Priority</label>
+                    <select id="editTaskPriority" required>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" onclick="closeModal('editModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTaskEdit()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Task Modal -->
+    <div id="removeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Remove Task</h3>
+                <button class="close-btn" onclick="closeModal('removeModal')">&times;</button>
+            </div>
+            <div class="task-list" id="removeTaskList">
+                <!-- Tasks will be populated here -->
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn" onclick="closeModal('removeModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/app.js"></script>
+</body>
+</html>
